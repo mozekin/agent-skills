@@ -1,0 +1,82 @@
+# ┌─────────────────────────────────────────────────────────────────┐
+# │  ghostty · "phosphor" — a matrix-green hacker theme               │
+# │  Drop this in as ~/.config/ghostty/config and restart Ghostty.    │
+# │  Every value is annotated so you can tune it to taste.            │
+# └─────────────────────────────────────────────────────────────────┘
+
+# ── Core colors ──────────────────────────────────────────────────────
+# Deep green-black background with a comfortable (not blinding) green
+# foreground. Pure #00FF00 is fatiguing to read; this is softened.
+background = #0a0e0a
+foreground = #4af08a
+
+# ── ANSI palette ─────────────────────────────────────────────────────
+# Green-forward, but every hue stays distinct so syntax highlighting,
+# `ls` colors, and TUIs remain readable. Red is kept genuinely red so
+# errors still jump out.
+palette = 0=#0a0e0a
+palette = 1=#ff5370
+palette = 2=#3bff6a
+palette = 3=#ffd166
+palette = 4=#2ac3de
+palette = 5=#b48eff
+palette = 6=#29e8c5
+palette = 7=#b6ffcf
+palette = 8=#2a3a2a
+palette = 9=#ff7a93
+palette = 10=#6bff9a
+palette = 11=#ffe08a
+palette = 12=#5fd7ff
+palette = 13=#cbb2ff
+palette = 14=#5ffbe0
+palette = 15=#e8ffe8
+
+# ── Cursor ───────────────────────────────────────────────────────────
+# Classic phosphor-green block that blinks like an old terminal.
+cursor-color = #00ff41
+cursor-text = #0a0e0a
+cursor-style = block
+cursor-style-blink = true
+
+# ── Selection ────────────────────────────────────────────────────────
+selection-background = #1f3d2b
+selection-foreground = #d7ffe6
+
+# ── Typography ───────────────────────────────────────────────────────
+# JetBrains Mono ships bundled with Ghostty, so this always resolves.
+# Swap for "FiraCode Nerd Font", "Hack Nerd Font", "IBM Plex Mono", etc.
+# Ligatures (calt) are on by default; add `font-feature = -calt` to kill them.
+font-family = JetBrains Mono
+font-size = 13
+font-thicken = true
+
+# ── Window & chrome ──────────────────────────────────────────────────
+# Slight transparency + blur gives that "floating glass" hacker look.
+# If your build errors on `background-blur = 20`, use `background-blur = true`
+# or `background-blur-radius = 20`. Blur works on macOS and KDE/some Wayland.
+background-opacity = 0.92
+background-blur = 20
+
+window-padding-x = 14
+window-padding-y = 14
+window-padding-balance = true
+window-theme = dark
+unfocused-split-opacity = 0.7
+
+# ── Quality-of-life ──────────────────────────────────────────────────
+mouse-hide-while-typing = true
+copy-on-select = clipboard
+shell-integration = detect
+window-save-state = always
+bold-is-bright = true
+
+# ── Optional: CRT / phosphor-glow shader ─────────────────────────────
+# Subtle scanlines + green bloom + vignette for full retro-hacker vibes.
+# Place crt-glow.glsl next to this config, then uncomment both lines.
+# Comment them back out if you notice any GPU cost.
+# custom-shader = shaders/crt-glow.glsl
+# custom-shader-animation = true
+
+# ── macOS-only extras (harmless to leave on Linux) ───────────────────
+# macos-titlebar-style = transparent
+# macos-option-as-alt = true
