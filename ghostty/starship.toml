@@ -1,0 +1,177 @@
+# starship.toml — neon prompt to match the Ghostty themes
+# -----------------------------------------------------------------------------
+#   ╭─ ~/agent-skills/ghostty  on  main ✓  via  22.11.0  took 3s
+#   ╰─❯
+#
+# Line 1: path (repo root highlighted), git branch + status, active toolchain,
+# slow-command timer, failed exit code. Line 2: the input caret, which turns
+# red after a failed command.
+#
+# Icons are Nerd Font glyphs. Ghostty bundles the Nerd Font symbols, so they
+# render there without installing anything.
+#
+# Git status legend:
+#   ✓ clean   +N staged   !N modified   ?N untracked   ✘N deleted
+#   »N renamed   *N stashed   =N conflicts   ⇡N ahead   ⇣N behind
+# -----------------------------------------------------------------------------
+
+"$schema" = "https://starship.rs/config-schema.json"
+
+# Match the Ghostty theme: "cyberpunk_neon" or "matrix_phosphor".
+palette = "cyberpunk_neon"
+
+add_newline = true
+command_timeout = 1000   # ms; keeps huge repos from stalling the prompt
+
+format = """
+[╭─](dim)\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$python\
+$nodejs\
+$rust\
+$golang\
+$docker_context\
+$jobs\
+$cmd_duration\
+$status
+[╰─](dim)$character"""
+
+# ── Palettes ─────────────────────────────────────────────────────────
+# Same hex values as ghostty/themes/*, so prompt and terminal agree.
+[palettes.cyberpunk_neon]
+accent = "#ff2e97"   # caret, repo root
+path   = "#2ce8f5"   # directory
+branch = "#e56bff"   # git branch
+ok     = "#00f5a0"   # clean, staged, ahead
+warn   = "#ffd23f"   # modified, durations, rebases
+err    = "#ff2e63"   # errors, deletions, behind
+info   = "#6aa9ff"   # untracked, toolchains, host
+stash  = "#db4bcb"   # stashes, background jobs
+dim    = "#7676b0"   # connector words and frame
+
+[palettes.matrix_phosphor]
+accent = "#00ff41"
+path   = "#29e8c5"
+branch = "#6bff9a"
+ok     = "#3bff6a"
+warn   = "#ffd166"
+err    = "#ff5370"
+info   = "#2ac3de"
+stash  = "#b48eff"
+dim    = "#5f8a6c"
+
+# ── Identity (only shown over SSH or as root) ────────────────────────
+[username]
+format = "[$user]($style)[@](dim)"
+style_user = "bold info"
+style_root = "bold err"
+
+[hostname]
+ssh_only = true
+format = "[$ssh_symbol$hostname]($style) "
+ssh_symbol = "󰣀 "
+style = "bold info"
+
+# ── Path ─────────────────────────────────────────────────────────────
+# Inside a repo the path starts at the repo root, which is highlighted, so
+# you always know which project you're in.
+[directory]
+format = "[ $path]($style)[$read_only]($read_only_style) "
+repo_root_format = "[ $before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+style = "bold path"
+before_repo_root_style = "path"
+repo_root_style = "bold accent"
+truncation_length = 4
+truncation_symbol = "…/"
+truncate_to_repo = false
+read_only = " 󰌾"
+read_only_style = "err"
+
+# ── Git ──────────────────────────────────────────────────────────────
+[git_branch]
+format = "[on](dim) [$symbol$branch(:$remote_branch)]($style) "
+symbol = " "
+style = "bold branch"
+truncation_length = 40
+truncation_symbol = "…"
+
+# Commit hash (and tag) only when HEAD is detached.
+[git_commit]
+format = "[$hash$tag]($style) "
+style = "bold info"
+only_detached = true
+tag_disabled = false
+tag_symbol = " 󰓹 "
+
+# Rebasing / merging / cherry-picking, with progress.
+[git_state]
+format = '[\($state( $progress_current/$progress_total)\)]($style) '
+style = "bold warn"
+
+[git_status]
+format = "([$all_status$ahead_behind]($style))"
+style = "bold"
+up_to_date = "[✓ ](ok)"
+conflicted = "[=${count} ](bold err)"
+ahead = "[⇡${count} ](bold ok)"
+behind = "[⇣${count} ](bold err)"
+diverged = "[⇡${ahead_count}⇣${behind_count} ](bold warn)"
+untracked = "[?${count} ](info)"
+stashed = "[*${count} ](stash)"
+modified = "[!${count} ](warn)"
+staged = "[+${count} ](ok)"
+renamed = "[»${count} ](info)"
+deleted = "[✘${count} ](err)"
+
+# ── Toolchains (only appear inside matching projects) ────────────────
+[python]
+format = '[via](dim) [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = " "
+style = "info"
+
+[nodejs]
+format = "[via](dim) [$symbol($version )]($style)"
+symbol = " "
+style = "ok"
+
+[rust]
+format = "[via](dim) [$symbol($version )]($style)"
+symbol = "󱘗 "
+style = "warn"
+
+[golang]
+format = "[via](dim) [$symbol($version )]($style)"
+symbol = " "
+style = "info"
+
+[docker_context]
+format = "[via](dim) [$symbol$context]($style) "
+symbol = " "
+style = "info"
+
+# ── Session ──────────────────────────────────────────────────────────
+[jobs]
+format = "[$symbol$number]($style) "
+symbol = "✦"
+style = "bold stash"
+
+[cmd_duration]
+min_time = 2000
+format = "[took](dim) [$duration]($style) "
+style = "bold warn"
+
+[status]
+disabled = false
+format = "[✘ $status]($style) "
+style = "bold err"
+
+[character]
+success_symbol = "[❯](bold accent)"
+error_symbol = "[❯](bold err)"
+vimcmd_symbol = "[❮](bold ok)"
