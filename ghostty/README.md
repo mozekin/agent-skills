@@ -81,8 +81,18 @@ uses [Starship](https://starship.rs) with a matching palette:
 
 **Setup** (one time):
 
-1. Install Starship: `brew install starship`, or on other Linux
-   `curl -sS https://starship.rs/install.sh | sh`.
+1. Install Starship with Nix:
+
+   ```sh
+   nix profile install nixpkgs#starship   # flakes on (default with Determinate Nix)
+   nix-env -iA nixpkgs.starship           # classic channels, flakes off
+   ```
+
+   No Nix yet? Install it from [nixos.org/download](https://nixos.org/download)
+   or with the [Determinate installer](https://determinate.systems/nix-installer/),
+   then open a new terminal. If you'd rather skip Nix, Homebrew
+   (`brew install starship`) and `curl -sS https://starship.rs/install.sh | sh`
+   also work.
 2. Add the hook to the end of your shell's startup file:
 
    | Shell | File | Line |
@@ -92,6 +102,35 @@ uses [Starship](https://starship.rs) with a matching palette:
    | fish | `~/.config/fish/config.fish` | `starship init fish \| source` |
 
 3. Open a new tab.
+
+### Using Home Manager instead of install.sh
+
+If you manage your dotfiles with [Home Manager](https://github.com/nix-community/home-manager)
+(standalone or through nix-darwin), let it install Starship and place every
+file. Copy this `ghostty/` folder next to your `home.nix`, then add:
+
+```nix
+{
+  # Installs starship and adds the hook to shells Home Manager manages
+  # (programs.zsh / bash / fish). Leave `settings` unset so Home Manager
+  # doesn't write its own starship.toml over ours.
+  programs.starship.enable = true;
+
+  xdg.configFile = {
+    "starship.toml".source  = ./ghostty/starship.toml;
+    "ghostty/config".source = ./ghostty/config;
+    "ghostty/themes".source  = ./ghostty/themes;
+    "ghostty/shaders".source = ./ghostty/shaders;
+  };
+}
+```
+
+Then run `home-manager switch` (or `darwin-rebuild switch`). Don't also run
+`install.sh`: it would replace Home Manager's links, and the next switch
+would fail with "existing file is in the way". If Home Manager doesn't manage
+your shell, add the `eval "$(starship init zsh)"` line to `~/.zshrc` yourself.
+Files placed this way are read-only links into the Nix store, so edit the
+copies next to `home.nix` and switch again.
 
 Icons are Nerd Font glyphs. Ghostty bundles them, so they work without
 installing a Nerd Font. Git status is skipped after 1s in very large repos

@@ -70,8 +70,17 @@ esac
 echo
 if ! command -v starship >/dev/null 2>&1; then
   echo "Prompt: install Starship first:"
-  echo "    brew install starship        # macOS / Linuxbrew"
-  echo "    curl -sS https://starship.rs/install.sh | sh   # other Linux"
+  if command -v nix >/dev/null 2>&1; then
+    echo "    nix profile install nixpkgs#starship   # flakes enabled (default with Determinate Nix)"
+    echo "    nix-env -iA nixpkgs.starship           # classic channels"
+    echo "  (or programs.starship.enable = true; in Home Manager, see README)"
+  elif command -v brew >/dev/null 2>&1; then
+    echo "    brew install starship"
+  else
+    echo "    Install Nix (https://nixos.org/download), then:"
+    echo "      nix profile install nixpkgs#starship"
+    echo "    or without Nix: curl -sS https://starship.rs/install.sh | sh"
+  fi
 fi
 if [ -n "$rc" ] && ! grep -qs 'starship init' "$rc"; then
   echo "Prompt: add this line to the end of $rc:"
