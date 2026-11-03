@@ -84,8 +84,17 @@ uses [Starship](https://starship.rs) with a matching palette:
 1. Install Starship with Nix:
 
    ```sh
-   nix profile install nixpkgs#starship   # flakes on (default with Determinate Nix)
-   nix-env -iA nixpkgs.starship           # classic channels, flakes off
+   nix --extra-experimental-features 'nix-command flakes' profile add nixpkgs#starship
+   ```
+
+   The flag makes this work even when flakes are off, which is the default
+   with the official Nix installer. On Nix older than about 2.30, use
+   `profile install` instead of `profile add`. To drop the flag for good,
+   enable flakes once:
+
+   ```sh
+   mkdir -p ~/.config/nix
+   echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
    ```
 
    No Nix yet? Install it from [nixos.org/download](https://nixos.org/download)

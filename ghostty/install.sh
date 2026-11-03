@@ -71,8 +71,15 @@ echo
 if ! command -v starship >/dev/null 2>&1; then
   echo "Prompt: install Starship first:"
   if command -v nix >/dev/null 2>&1; then
-    echo "    nix profile install nixpkgs#starship   # flakes enabled (default with Determinate Nix)"
-    echo "    nix-env -iA nixpkgs.starship           # classic channels"
+    # `nix profile install` was renamed to `add` in newer Nix; use whichever
+    # this Nix has. The flag makes it work even when flakes are disabled.
+    xf="--extra-experimental-features 'nix-command flakes'"
+    if nix --extra-experimental-features 'nix-command flakes' profile add --help >/dev/null 2>&1; then
+      sub=add
+    else
+      sub=install
+    fi
+    echo "    nix $xf profile $sub nixpkgs#starship"
     echo "  (or programs.starship.enable = true; in Home Manager, see README)"
   elif command -v brew >/dev/null 2>&1; then
     echo "    brew install starship"
