@@ -79,7 +79,16 @@ if ! command -v starship >/dev/null 2>&1; then
     else
       sub=install
     fi
-    echo "    nix $xf profile $sub nixpkgs#starship"
+    # nixpkgs-unstable (26.11+) dropped Intel Macs; 26.05 still supports them
+    # (security fixes until end of 2026). Ask Nix for its platform, which is
+    # right even when the shell runs under Rosetta.
+    nix_system="$(nix --extra-experimental-features nix-command config show system 2>/dev/null \
+      || echo "$(uname -m)-$(uname -s | tr '[:upper:]' '[:lower:]')")"
+    pkgs=nixpkgs
+    case "$nix_system" in
+      x86_64-darwin) pkgs=github:NixOS/nixpkgs/nixpkgs-26.05-darwin ;;
+    esac
+    echo "    nix $xf profile $sub $pkgs#starship"
     echo "  (or programs.starship.enable = true; in Home Manager, see README)"
   elif command -v brew >/dev/null 2>&1; then
     echo "    brew install starship"

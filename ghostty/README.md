@@ -89,8 +89,17 @@ uses [Starship](https://starship.rs) with a matching palette:
 
    The flag makes this work even when flakes are off, which is the default
    with the official Nix installer. On Nix older than about 2.30, use
-   `profile install` instead of `profile add`. To drop the flag for good,
-   enable flakes once:
+   `profile install` instead of `profile add`.
+
+   **Intel Mac?** The current nixpkgs (26.11+) has dropped Intel Macs and
+   fails with "dropped support for x86_64-darwin". Use the 26.05 branch,
+   which gets security fixes until the end of 2026:
+
+   ```sh
+   nix --extra-experimental-features 'nix-command flakes' profile add github:NixOS/nixpkgs/nixpkgs-26.05-darwin#starship
+   ```
+
+   To drop the flag for good, enable flakes once:
 
    ```sh
    mkdir -p ~/.config/nix
@@ -134,6 +143,9 @@ file. Copy this `ghostty/` folder next to your `home.nix`, then add:
 }
 ```
 
+On an Intel Mac, point your flake's input at
+`github:NixOS/nixpkgs/nixpkgs-26.05-darwin` (or, with channels,
+`sudo nix-channel --add https://nixos.org/channels/nixpkgs-26.05-darwin nixpkgs`).
 Then run `home-manager switch` (or `darwin-rebuild switch`). Don't also run
 `install.sh`: it would replace Home Manager's links, and the next switch
 would fail with "existing file is in the way". If Home Manager doesn't manage
