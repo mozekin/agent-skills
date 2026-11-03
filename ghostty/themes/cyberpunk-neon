@@ -1,0 +1,39 @@
+# cyberpunk-neon — neon magenta + cyan on deep indigo-black.
+# A Ghostty theme file: colors only. Select it with `theme = cyberpunk-neon`.
+#
+# Every ANSI color clears WCAG 3:1 against the background, and all but the
+# dim ones clear 4.5:1, so comments, autosuggestions and `ls` output stay
+# legible. The signature magenta lives on the cursor and split dividers.
+
+background = #0b0b16
+foreground = #e6e6fa
+
+# ── ANSI 0–7 ─────────────────────────────────────────────────────────
+palette = 0=#0b0b16
+palette = 1=#ff2e63
+palette = 2=#00f5a0
+palette = 3=#ffd23f
+palette = 4=#3d84ff
+palette = 5=#db4bcb
+palette = 6=#2ce8f5
+palette = 7=#c7c7e6
+
+# ── ANSI 8–15 (bright) ───────────────────────────────────────────────
+# 8 is "bright black": comments, zsh autosuggestions, git dim text.
+# Lifted from #3a3a5a (1.8:1, near-invisible) to #7676b0 (4.65:1).
+palette = 8=#7676b0
+palette = 9=#ff5c8a
+palette = 10=#5cffc0
+palette = 11=#ffe066
+palette = 12=#6aa9ff
+palette = 13=#e56bff
+palette = 14=#72f9ff
+palette = 15=#ffffff
+
+# ── Cursor, selection, splits ────────────────────────────────────────
+cursor-color = #ff2e97
+cursor-text = #0b0b16
+selection-background = #3a2766
+selection-foreground = #ffffff
+split-divider-color = #ff2e97
+unfocused-split-fill = #05050b

@@ -1,128 +1,106 @@
-# 👾 Ghostty "phosphor" — a hacker terminal theme
+# 👾 Ghostty hacker config
 
-A matrix-green Ghostty theme: deep green-black background, comfortable phosphor
-foreground, a blinking green block cursor, subtle transparency + blur, and an
-optional CRT-glow shader. Tuned to actually be *readable* all day, not just
-look cool in a screenshot.
+A Ghostty setup with a cyberpunk look that you can still read all day: neon
+magenta and cyan on indigo-black, a blinking block cursor, translucent glass,
+a drop-down terminal, and two optional shaders (a CRT glow and a neon cursor
+trail). A matrix-green theme is included as an alternative.
+
+Targets **Ghostty 1.3+**.
 
 ```
-┌────────────────────────────────────────────┐
-│  $ whoami                                    │
-│  root                                        │
-│  $ ./exploit --target localhost --pwn        │
-│  [+] shell acquired ▓                         │
-└────────────────────────────────────────────┘
+ghostty/
+├── config                  behaviour: font, cursor, window, keybinds
+├── themes/
+│   ├── cyberpunk-neon      default: neon magenta + cyan
+│   └── matrix-phosphor     phosphor green
+├── shaders/
+│   ├── crt-glow.glsl       scanlines + glow in the text colour + vignette
+│   └── cursor-trail.glsl   neon streak when the cursor jumps
+└── install.sh
 ```
 
 ## Install
 
-Ghostty reads a single plain-text config file. Copy `config` there:
-
-**Linux**
 ```sh
-mkdir -p ~/.config/ghostty
-cp config ~/.config/ghostty/config
-# optional CRT shader:
-mkdir -p ~/.config/ghostty/shaders
-cp shaders/crt-glow.glsl ~/.config/ghostty/shaders/
+cd ghostty
+./install.sh           # copy into ~/.config/ghostty
+./install.sh --link    # or symlink, so edits here apply live
 ```
 
-**macOS** (Ghostty also reads the XDG path above, or use its own dir)
-```sh
-mkdir -p "~/Library/Application Support/com.mitchellh.ghostty"
-cp config "~/Library/Application Support/com.mitchellh.ghostty/config"
+The installer backs up any existing `config` to `config.bak.<timestamp>`.
+It leaves your other themes and shaders alone. If `ghostty` is on your PATH,
+it also runs `ghostty +validate-config`. Reload with **ctrl+shift+,**
+(**cmd+shift+,** on macOS).
+
+To install by hand, copy `config` to `~/.config/ghostty/config`, and copy
+`themes/` and `shaders/` next to it.
+
+## What you get
+
+| | |
+|---|---|
+| **Readable palette** | Every ANSI color clears 3:1 contrast against the background, and most clear 4.5:1. "Bright black" (used for comments, zsh autosuggestions and dim git text) was raised from a near-invisible 1.8:1 to 4.65:1. |
+| **Block cursor that stays a block** | Ghostty's shell integration normally turns the cursor into a bar at the prompt. `no-cursor` keeps the blinking neon block. |
+| **SSH just works** | `ssh-env` and `ssh-terminfo` stop "unknown terminal type xterm-ghostty" errors on remote hosts. |
+| **Glass window** | 92% opacity with blur on macOS and KDE. Elsewhere you get plain transparency. |
+| **Edge-to-edge TUIs** | `window-padding-color = extend` paints the padding to match htop, lazygit or vim backgrounds. |
+| **Drop-down terminal** | **ctrl+`** from anywhere slides a terminal down from the top of the screen. |
+| **Focused pane stands out** | Inactive splits are dimmed, and split dividers use the theme accent. |
+| **Never-invisible text** | `minimum-contrast = 1.1` rescues programs that print text in the background color. |
+
+## Switch themes
+
+Change one line in `config`:
+
+```
+theme = matrix-phosphor
 ```
 
-Reload with **Cmd/Ctrl+Shift+,** or just restart Ghostty. Check for typos with:
+To follow your OS light/dark setting, use
+`theme = light:<a light theme>,dark:cyberpunk-neon`. Run `ghostty +list-themes`
+to see the built-in themes.
 
-```sh
-ghostty +show-config          # what Ghostty actually parsed
-ghostty +validate-config      # report errors/unknown keys
-```
+## Shaders (optional)
 
-## Turn on the CRT glow (optional)
-
-Uncomment these two lines in `config` after copying the shader:
+Uncomment one or both lines in `config`. They stack in the order listed:
 
 ```
 custom-shader = shaders/crt-glow.glsl
-custom-shader-animation = true
+custom-shader = shaders/cursor-trail.glsl
 ```
 
-It adds faint scanlines, a green bloom, and a vignette. Tune the three constants
-at the top of `crt-glow.glsl`, or set `BLOOM = 0.0` to drop the glow. Comment the
-lines back out if you ever notice GPU cost.
+- **crt-glow**: the glow uses each glyph's own color, so it looks neon under
+  cyberpunk and green under matrix. Empty cells never glow, and the window's
+  transparency is kept. Tune `BLOOM`, `SCANLINE` and `VIGNETTE` at the top of
+  the file.
+- **cursor-trail**: a short tapered streak in the cursor color whenever the
+  cursor jumps (new line, vim motion, click). Normal typing leaves no trail.
+  Tune `DURATION` and `INTENSITY`.
+
+Shaders use a little GPU and only animate while the window is focused. If a
+shader fails to compile, Ghostty skips it and logs the error. Config
+validation won't report it.
 
 ## Fonts
 
-The config uses **JetBrains Mono**, which ships bundled with Ghostty, so it
-always works. For the full hacker look, install a Nerd Font (adds glyphs/icons
-for prompts like Starship, Powerlevel10k) and swap the line:
+JetBrains Mono comes bundled with Ghostty, so the config works without
+installing anything. For prompt icons (Starship, Powerlevel10k), install a
+Nerd Font and set:
 
 ```
-font-family = JetBrainsMono Nerd Font   # or "FiraCode Nerd Font", "Hack Nerd Font"
+font-family = JetBrainsMono Nerd Font
 ```
 
-Ligatures are on by default — add `font-feature = -calt` to disable them.
+Add `font-feature = -calt` to turn ligatures off. `adjust-cell-height = 8%`
+adds line spacing; set it to `0` for a tighter grid.
 
-## Alternate palettes
+## Platform notes
 
-Same layout, different vibe. Replace the **Core colors**, **ANSI palette**, and
-**Cursor** blocks in `config` with one of these.
-
-### 🔮 Cyberpunk (neon magenta + cyan)
-
-```
-background = #0b0b16
-foreground = #e6e6fa
-cursor-color = #ff2e97
-
-palette = 0=#0b0b16
-palette = 1=#ff2e63
-palette = 2=#00f5a0
-palette = 3=#ffd23f
-palette = 4=#3d84ff
-palette = 5=#c724b1
-palette = 6=#2ce8f5
-palette = 7=#c7c7e6
-palette = 8=#3a3a5a
-palette = 9=#ff5c8a
-palette = 10=#5cffc0
-palette = 11=#ffe066
-palette = 12=#6aa9ff
-palette = 13=#e56bff
-palette = 14=#72f9ff
-palette = 15=#ffffff
-```
-
-### 🟠 Amber phosphor (old-school CRT)
-
-```
-background = #100a02
-foreground = #ffb000
-cursor-color = #ffb000
-
-palette = 0=#100a02
-palette = 1=#ff5f00
-palette = 2=#d7a500
-palette = 3=#ffb000
-palette = 4=#c08a2e
-palette = 5=#e58f65
-palette = 6=#e0a458
-palette = 7=#ffcc66
-palette = 8=#5a3d1a
-palette = 9=#ff7f2a
-palette = 10=#ffc94d
-palette = 11=#ffd27f
-palette = 12=#e0a86b
-palette = 13=#ffb27f
-palette = 14=#ffcf99
-palette = 15=#fff0c0
-```
-
-## Notes
-
-- If your Ghostty build rejects `background-blur = 20`, use `background-blur = true`
-  or `background-blur-radius = 20`.
-- Ghostty warns about unknown keys but still loads — `+validate-config` shows them.
-- Prefer a built-in theme instead? `ghostty +list-themes` and set `theme = <name>`.
+- **Drop-down terminal on Linux** needs a desktop whose XDG portal supports
+  GlobalShortcuts (GNOME and KDE do). On macOS, grant Ghostty Accessibility
+  permission the first time you use it.
+- **Blur** works on macOS and KDE Plasma. Other compositors ignore it.
+- `font-thicken` and the commented `macos-*` options only apply on macOS.
+- **256-color apps**: uncomment `palette-generate = true` to build colors
+  16–255 from the theme so btop and some vim/tmux themes match. It's off by
+  default because a few old programs expect the standard xterm colors.

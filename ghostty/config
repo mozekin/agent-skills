@@ -1,82 +1,91 @@
 # ┌─────────────────────────────────────────────────────────────────┐
-# │  ghostty · "phosphor" — a matrix-green hacker theme               │
-# │  Drop this in as ~/.config/ghostty/config and restart Ghostty.    │
-# │  Every value is annotated so you can tune it to taste.            │
+# │  ghostty · hacker terminal config                                 │
+# │  Targets Ghostty 1.3+. Install with ./install.sh, or copy this    │
+# │  file to ~/.config/ghostty/config and themes/ to                  │
+# │  ~/.config/ghostty/themes/.                                       │
 # └─────────────────────────────────────────────────────────────────┘
 
-# ── Core colors ──────────────────────────────────────────────────────
-# Deep green-black background with a comfortable (not blinding) green
-# foreground. Pure #00FF00 is fatiguing to read; this is softened.
-background = #0a0e0a
-foreground = #4af08a
+# ── Theme ────────────────────────────────────────────────────────────
+# Colors live in themes/ so switching is one line. Options:
+#   cyberpunk-neon   neon magenta + cyan on indigo-black (default)
+#   matrix-phosphor  phosphor green on green-black
+theme = cyberpunk-neon
 
-# ── ANSI palette ─────────────────────────────────────────────────────
-# Green-forward, but every hue stays distinct so syntax highlighting,
-# `ls` colors, and TUIs remain readable. Red is kept genuinely red so
-# errors still jump out.
-palette = 0=#0a0e0a
-palette = 1=#ff5370
-palette = 2=#3bff6a
-palette = 3=#ffd166
-palette = 4=#2ac3de
-palette = 5=#b48eff
-palette = 6=#29e8c5
-palette = 7=#b6ffcf
-palette = 8=#2a3a2a
-palette = 9=#ff7a93
-palette = 10=#6bff9a
-palette = 11=#ffe08a
-palette = 12=#5fd7ff
-palette = 13=#cbb2ff
-palette = 14=#5ffbe0
-palette = 15=#e8ffe8
+# Never draw text the same color as its background (e.g. a TUI that sets
+# fg = bg). 1.1 only kicks in for invisible text; it won't repaint the theme.
+minimum-contrast = 1.1
+
+# Bold text uses the bright palette variant: punchier neon headings.
+bold-color = bright
 
 # ── Cursor ───────────────────────────────────────────────────────────
-# Classic phosphor-green block that blinks like an old terminal.
-cursor-color = #00ff41
-cursor-text = #0a0e0a
 cursor-style = block
 cursor-style-blink = true
 
-# ── Selection ────────────────────────────────────────────────────────
-selection-background = #1f3d2b
-selection-foreground = #d7ffe6
+# ── Shell integration ────────────────────────────────────────────────
+# `no-cursor` matters: by default shell integration turns the cursor into
+# a bar at the prompt, which silently overrides the block cursor above.
+# ssh-env / ssh-terminfo stop "unknown terminal xterm-ghostty" on remote
+# hosts; sudo keeps terminfo working under sudo.
+shell-integration = detect
+shell-integration-features = no-cursor,sudo,ssh-env,ssh-terminfo
 
 # ── Typography ───────────────────────────────────────────────────────
 # JetBrains Mono ships bundled with Ghostty, so this always resolves.
-# Swap for "FiraCode Nerd Font", "Hack Nerd Font", "IBM Plex Mono", etc.
-# Ligatures (calt) are on by default; add `font-feature = -calt` to kill them.
+# For prompt icons (Starship, p10k) install a Nerd Font and use e.g.
+# `font-family = JetBrainsMono Nerd Font`. Add `font-feature = -calt` to
+# turn ligatures off.
 font-family = JetBrains Mono
 font-size = 13
+# A little extra line spacing makes dense output much easier to scan.
+adjust-cell-height = 8%
+# Heavier strokes so thin neon glyphs don't look washed out (macOS only;
+# ignored elsewhere).
 font-thicken = true
 
-# ── Window & chrome ──────────────────────────────────────────────────
-# Slight transparency + blur gives that "floating glass" hacker look.
-# If your build errors on `background-blur = 20`, use `background-blur = true`
-# or `background-blur-radius = 20`. Blur works on macOS and KDE/some Wayland.
+# ── Window ───────────────────────────────────────────────────────────
+# Translucent glass. Blur needs macOS or a compositor that supports it
+# (KDE Plasma). Elsewhere it is ignored and you just get transparency.
 background-opacity = 0.92
 background-blur = 20
 
 window-padding-x = 14
-window-padding-y = 14
+window-padding-y = 12
 window-padding-balance = true
+# Padding takes the color of the nearest cell, so full-screen TUIs with
+# their own background (htop, lazygit, vim themes) run edge to edge.
+window-padding-color = extend
 window-theme = dark
-unfocused-split-opacity = 0.7
+window-save-state = always
 
-# ── Quality-of-life ──────────────────────────────────────────────────
+# Dim inactive splits so the focused pane glows.
+unfocused-split-opacity = 0.6
+
+# ── Quality of life ──────────────────────────────────────────────────
 mouse-hide-while-typing = true
 copy-on-select = clipboard
-shell-integration = detect
-window-save-state = always
-bold-is-bright = true
 
-# ── Optional: CRT / phosphor-glow shader ─────────────────────────────
-# Subtle scanlines + green bloom + vignette for full retro-hacker vibes.
-# Place crt-glow.glsl next to this config, then uncomment both lines.
-# Comment them back out if you notice any GPU cost.
+# ── Drop-down "quick terminal" ───────────────────────────────────────
+# Ctrl+` from anywhere slides a terminal down from the top of the screen.
+# Global shortcuts work on macOS (grant Accessibility permission) and on
+# Linux desktops whose XDG portal supports GlobalShortcuts (GNOME, KDE).
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
+quick-terminal-position = top
+quick-terminal-animation-duration = 0.15
+
+# ── Optional: 256-color palette from the theme ───────────────────────
+# Derives colors 16–255 from the 16 theme colors, so apps that use the
+# 256-color cube (some vim/tmux themes, btop) match the theme too. Off by
+# default because a few legacy programs assume the stock xterm cube.
+# palette-generate = true
+
+# ── Optional: shaders ────────────────────────────────────────────────
+# Shaders stack in the order listed. Both adapt to the active theme.
+#   crt-glow.glsl      soft scanlines, bloom in the text color, vignette
+#   cursor-trail.glsl  short neon trail when the cursor jumps
 # custom-shader = shaders/crt-glow.glsl
-# custom-shader-animation = true
+# custom-shader = shaders/cursor-trail.glsl
 
-# ── macOS-only extras (harmless to leave on Linux) ───────────────────
-# macos-titlebar-style = transparent
+# ── macOS extras (ignored on Linux) ──────────────────────────────────
+# macos-titlebar-style = tabs
 # macos-option-as-alt = true

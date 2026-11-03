@@ -1,0 +1,37 @@
+# matrix-phosphor — phosphor green on green-black.
+# A Ghostty theme file: colors only. Select it with `theme = matrix-phosphor`.
+#
+# Green-forward, but every hue stays distinct so syntax highlighting works,
+# and red stays red so errors jump out.
+
+background = #0a0e0a
+foreground = #4af08a
+
+# ── ANSI 0–7 ─────────────────────────────────────────────────────────
+palette = 0=#0a0e0a
+palette = 1=#ff5370
+palette = 2=#3bff6a
+palette = 3=#ffd166
+palette = 4=#2ac3de
+palette = 5=#b48eff
+palette = 6=#29e8c5
+palette = 7=#b6ffcf
+
+# ── ANSI 8–15 (bright) ───────────────────────────────────────────────
+# 8 lifted from #2a3a2a (1.6:1, near-invisible) to #5f8a6c (4.9:1).
+palette = 8=#5f8a6c
+palette = 9=#ff7a93
+palette = 10=#6bff9a
+palette = 11=#ffe08a
+palette = 12=#5fd7ff
+palette = 13=#cbb2ff
+palette = 14=#5ffbe0
+palette = 15=#e8ffe8
+
+# ── Cursor, selection, splits ────────────────────────────────────────
+cursor-color = #00ff41
+cursor-text = #0a0e0a
+selection-background = #1f3d2b
+selection-foreground = #d7ffe6
+split-divider-color = #00ff41
+unfocused-split-fill = #050805
